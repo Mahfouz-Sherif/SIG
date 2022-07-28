@@ -53,7 +53,7 @@ public class InvoiceLine {
 
     @Override
     public String toString() {
-        return "InvoiceLine{" + "invoice=" + invoice + ", count=" + count + ", itemName=" + itemName + ", itemPrice=" + itemPrice + '}';
+        return "" + count + ", " + itemName + ", " + itemPrice + "";
     }
 
     

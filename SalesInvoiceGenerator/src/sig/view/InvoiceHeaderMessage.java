@@ -38,6 +38,19 @@ public InvoiceHeaderMessage(InvoiceFrame frame){
     add(CustomerNameLabel);
     add(CustomerNameField);
     add(OKButton);
+    add(CancelButton);
+    
+    pack();
+       
 
 }
+
+    public JTextField getCustomerNameField() {
+     return CustomerNameField;
+    }
+
+    public JTextField getInvoiceDateField() {
+     return InvDateField;
+    }
+
 }

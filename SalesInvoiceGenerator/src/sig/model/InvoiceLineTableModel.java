@@ -23,7 +23,7 @@ public class InvoiceLineTableModel extends AbstractTableModel {
           
     @Override
     public int getRowCount() {
-        return LinesArray.size();
+        return LinesArray == null ? 0 :LinesArray.size();
     }
 
     @Override
@@ -33,15 +33,21 @@ public class InvoiceLineTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        if(LinesArray==null)
+            return "";
+        else{
+        
         InvoiceLine line= LinesArray.get(rowIndex);
-        switch(columnIndex){
-            case 0: return line.getItemName();
-            case 1: return line.getItemPrice();
-            case 2: return line.getCount();
-            case 3: return line.getLineTotal();
+        switch(columnIndex){ 
+            case 0: return line.getInvoice().getInvoiceNum();
+            case 1: return line.getItemName();
+            case 2: return line.getItemPrice();
+            case 3: return line.getCount();
+            case 4: return line.getLineTotal();
             default: return "";
             
         }
+      }
     }
      
     @Override

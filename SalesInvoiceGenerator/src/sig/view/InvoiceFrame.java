@@ -13,6 +13,7 @@ import sig.controller.ActionHandling;
 import sig.controller.InvoiceTableSelector;
 import sig.model.InvoiceHeader;
 import sig.model.InvoiceHeaderTableModel;
+import sig.model.InvoiceLine;
 
 /**
  *
@@ -44,10 +45,10 @@ public class InvoiceFrame extends javax.swing.JFrame {
         NewInvoiceButton.addActionListener(handle);
         DeleteInvoiceButton = new javax.swing.JButton();
         DeleteInvoiceButton.addActionListener(handle);
-        SaveButton = new javax.swing.JButton();
-        SaveButton.addActionListener(handle);
-        CancelButton = new javax.swing.JButton();
-        CancelButton.addActionListener(handle);
+        NewLineButton = new javax.swing.JButton();
+        NewLineButton.addActionListener(handle);
+        DeleteLineButton = new javax.swing.JButton();
+        DeleteLineButton.addActionListener(handle);
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -84,9 +85,14 @@ public class InvoiceFrame extends javax.swing.JFrame {
 
         DeleteInvoiceButton.setText("Delete Invoice");
 
-        SaveButton.setText("Save");
+        NewLineButton.setText("New Line");
+        NewLineButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NewLineButtonActionPerformed(evt);
+            }
+        });
 
-        CancelButton.setText("Cancel");
+        DeleteLineButton.setText("Delete Line");
 
         jLabel2.setText("Invoice Number");
 
@@ -150,9 +156,9 @@ public class InvoiceFrame extends javax.swing.JFrame {
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(157, 157, 157)
-                                .addComponent(SaveButton)
+                                .addComponent(NewLineButton)
                                 .addGap(84, 84, 84)
-                                .addComponent(CancelButton))
+                                .addComponent(DeleteLineButton))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -165,8 +171,7 @@ public class InvoiceFrame extends javax.swing.JFrame {
                                             .addComponent(jLabel3)
                                             .addComponent(jLabel2)
                                             .addComponent(jLabel4)
-                                            .addComponent(jLabel5))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                            .addComponent(jLabel5))))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(30, 30, 30)
@@ -213,13 +218,17 @@ public class InvoiceFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(SaveButton)
-                            .addComponent(CancelButton))
+                            .addComponent(NewLineButton)
+                            .addComponent(DeleteLineButton))
                         .addContainerGap())))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void NewLineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewLineButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NewLineButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -257,9 +266,9 @@ public class InvoiceFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton CancelButton;
     private javax.swing.JLabel CustomerNameLabel;
     private javax.swing.JButton DeleteInvoiceButton;
+    private javax.swing.JButton DeleteLineButton;
     private javax.swing.JMenu FileMenu;
     private javax.swing.JTable HeaderTable;
     private javax.swing.JLabel InvDateLabel;
@@ -268,7 +277,7 @@ public class InvoiceFrame extends javax.swing.JFrame {
     private javax.swing.JTable LineTable;
     private javax.swing.JMenuItem LoadFileItem;
     private javax.swing.JButton NewInvoiceButton;
-    private javax.swing.JButton SaveButton;
+    private javax.swing.JButton NewLineButton;
     private javax.swing.JMenuItem SaveFileItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -283,10 +292,21 @@ public class InvoiceFrame extends javax.swing.JFrame {
 
     private  ActionHandling handle=new ActionHandling(this);
     private ArrayList<InvoiceHeader> InvoicesArray;
+    private ArrayList<InvoiceLine> LinesArray;
     private InvoiceHeaderTableModel HeaderTableModel;
     public static SimpleDateFormat DateFormat=new SimpleDateFormat("dd-MM-yyyy");
     private InvoiceTableSelector InvoiceHeaderSelector = new InvoiceTableSelector(this);
 
+    public ArrayList<InvoiceLine> getLinesArray() {
+        return LinesArray;
+    }
+
+    public void setLinesArray(ArrayList<InvoiceLine> LinesArray) {
+        this.LinesArray = LinesArray;
+    }
+
+    
+    
     public ArrayList<InvoiceHeader> getInvoicesArray() {
         return InvoicesArray;
     }

@@ -5,10 +5,69 @@
  */
 package sig.view;
 
+import java.awt.GridLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 /**
  *
  * @author Mahfouz Sherif
  */
-public class InvoiceLineMessage {
+public class InvoiceLineMessage extends JDialog {
+private JTextField ItemNameField;
+private JTextField ItemCountField;
+private JTextField ItemPriceField;
+private JLabel ItemNameLabel;
+private JLabel ItemCountLabel;
+private JLabel ItemPriceLabel;
+private JButton OKButton;
+private JButton CancelButton;
+
+public InvoiceLineMessage(InvoiceFrame frame){
+    ItemNameField= new JTextField(20);                         
+    ItemNameLabel= new JLabel("Item Name");
+                           
+    ItemCountField= new JTextField(20);
+    ItemCountLabel= new JLabel("Item Count");
     
+    ItemPriceField= new JTextField(20);
+    ItemPriceLabel= new JLabel("Item Price");
+    
+    OKButton= new JButton("OK");
+    CancelButton= new JButton("Cancel");
+    
+    OKButton.setActionCommand("NewLineOK");
+CancelButton.setActionCommand("NewLineCancel");
+OKButton.addActionListener(frame.getHandle());
+CancelButton.addActionListener(frame.getHandle());
+setLayout(new GridLayout(4,2));
+
+add (ItemNameLabel);
+add(ItemNameField);
+add(ItemCountLabel);
+add(ItemCountField);
+add(ItemPriceLabel);
+add(ItemPriceField);
+add(OKButton);
+add(CancelButton);
+pack();
+    
+    
+}
+
+    public JTextField getItemNameField() {
+        return ItemNameField;
+    }
+
+    public JTextField getItemCountField() {
+        return ItemCountField;
+    }
+
+    public JTextField getItemPriceField() {
+        return ItemPriceField;
+    }
+    
+    
+
 }

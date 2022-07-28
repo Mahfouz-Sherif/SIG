@@ -8,6 +8,7 @@ package sig.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,14 +25,18 @@ import javax.swing.JOptionPane;
 import sig.model.InvoiceHeader;
 import sig.model.InvoiceHeaderTableModel;
 import sig.model.InvoiceLine;
+import sig.model.InvoiceLineTableModel;
 import sig.view.InvoiceFrame;
+import sig.view.InvoiceHeaderMessage;
+import sig.view.InvoiceLineMessage;
 /**
  *
  * @author Mahfouz Sherif
  */
 public class ActionHandling implements ActionListener {
     private InvoiceFrame frame;
-    
+    private InvoiceHeaderMessage HeaderMessage;
+    private InvoiceLineMessage LineMessage;
     public ActionHandling(InvoiceFrame frame){
            this.frame=frame;
     }
@@ -47,14 +52,13 @@ public class ActionHandling implements ActionListener {
                 System.out.println("Delete Invoice");
                 DeleteInvoice();
                 break;
-            case"Save":
-                System.out.println("Save");
-                Save();
+            case"New Line":
+                System.out.println("New Line");
+                NewLine();
                 break;
-            case"Cancel":
-                    System.out.println("Cancel");
-                    
-                    Cancel();
+            case"Delete Line":
+                        System.out.println("Delete Line");
+                    DeleteLine();
                 break;
             case"Load File":
                 System.out.println("Load File");  
@@ -70,22 +74,96 @@ public class ActionHandling implements ActionListener {
                 break;
             case"NewInvoiceCancel": 
                 NewInvoiceMessageCancel();
+                break;
+                
+            case"NewLineCancel":
+                NewLineMessageCancel();
+                break;
+            case"NewLineOK":
+                NewLineMessageOK();
+                
         }
         
     }
 
     private void CreateNewInvoice() {
+        HeaderMessage= new InvoiceHeaderMessage(frame);
+        HeaderMessage.setVisible(true);
+         
+    }
+    
+    private void NewInvoiceMessageCancel() {
+       HeaderMessage.setVisible(false);
+       HeaderMessage.dispose();
+       HeaderMessage=null;
     }
 
+    private void NewInvoiceMessageOK() {
+       HeaderMessage.setVisible(false);
+ 
+       String CustomerName = HeaderMessage.getCustomerNameField().getText();
+       String InvoiceDate = HeaderMessage.getInvoiceDateField().getText();
+       Date D = new Date();
+       
+        try {
+            D = InvoiceFrame.DateFormat.parse(InvoiceDate);
+        } catch (ParseException ex) {
+           JOptionPane.showMessageDialog(frame, "Correct date format is (dd-mm-yyyy), resetting to today's date.","Invalid date format",JOptionPane.ERROR_MESSAGE);      
+        }
+        int InvNum =0;
+        for(InvoiceHeader inv: frame.getInvoicesArray()){
+             if(inv.getInvoiceNum()> InvNum )
+                 InvNum=inv.getInvoiceNum();
+        }  InvNum++;
+        
+        InvoiceHeader Inv= new InvoiceHeader(InvNum,CustomerName,D);
+        frame.getInvoicesArray().add(Inv);
+        frame.getHeaderTableModel().fireTableDataChanged();
+       HeaderMessage.dispose();
+       HeaderMessage=null;
+    }
+
+    
     private void DeleteInvoice() {
+        int SelectedInvIndex= frame.getHeaderTable().getSelectedRow();
+        if(SelectedInvIndex!=-1){
+        frame.getInvoicesArray().remove(SelectedInvIndex);
+        frame.getHeaderTableModel().fireTableDataChanged();
+        frame.getLineTable().setModel(new InvoiceLineTableModel(null));
+        
+         frame.setLinesArray(null);
+       frame.getCustomerNameLabel().setText("");
+       frame.getInvNumLabel().setText("");
+       frame.getInvTotalLabel().setText("");
+       frame.getInvDateLabel().setText(null);
+        }
     }
 
 
-    private void Save() {
+    private void NewLine() {
+        LineMessage= new InvoiceLineMessage(frame);
+        LineMessage.setVisible(true);
+        
     }
 
-    private void Cancel() {
-        System.exit(0);
+    private void DeleteLine() {
+        
+        int SelectedInvoiceHeader= frame.getHeaderTable().getSelectedRow();             
+
+        int SelectedLineIndex= frame.getLineTable().getSelectedRow();
+        if(SelectedLineIndex != -1){   
+        frame.getLinesArray().remove(SelectedLineIndex);
+         InvoiceLineTableModel LineTableModel = (InvoiceLineTableModel) frame.getLineTable().getModel();
+         LineTableModel.fireTableDataChanged();
+         InvoiceHeader InvHeader= frame.getInvoicesArray().get(SelectedInvoiceHeader);                   //These statements show that the invoice total changed
+         frame.getHeaderTableModel().fireTableDataChanged();                                             //without having to click on  the invoice header again
+         frame.getInvTotalLabel().setText(""+ InvHeader.getInvoiceTotal());
+        }
+         frame.getHeaderTable().setRowSelectionInterval(SelectedInvoiceHeader,SelectedInvoiceHeader);    
+
+                
+
+        //System.exit(0);
     }
 
     private void LoadFile() {
@@ -133,21 +211,93 @@ public class ActionHandling implements ActionListener {
        frame.getHeaderTable().setModel(HeaderTableModel);
        }
        }catch(IOException ex){
-           JOptionPane.showMessageDialog(frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(frame, "The file you used is either missing or invalid.", "Error", JOptionPane.ERROR_MESSAGE);
        } catch (ParseException ex) { 
            JOptionPane.showMessageDialog(frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } 
     } 
 
     private void SaveFile() {
+        ArrayList<InvoiceHeader> SaveInvoicesArray= frame.getInvoicesArray();
+        JFileChooser fc= new JFileChooser();
+        try {
+        int res=fc.showSaveDialog(frame);
+        if(res==JFileChooser.APPROVE_OPTION){
+            File HeaderSaveFile=fc.getSelectedFile();    
+            
+                FileWriter HeaderFW = new FileWriter(HeaderSaveFile);
+                String Headers="";
+                String lines="";
+                for(InvoiceHeader invoice : SaveInvoicesArray){
+                     Headers+= invoice.toString();
+                     Headers += '\n';
+                     
+                    for(InvoiceLine line : invoice.getLines() ){
+                         lines+= line.toString();
+                         lines+='\n';      
+                    } 
+              
+                }
+                res=fc.showSaveDialog(frame);
+                File LineSaveFile =fc.getSelectedFile();
+                FileWriter LineFW =new FileWriter(LineSaveFile);
+                HeaderFW.write(Headers);
+                LineFW.write(lines);
+                HeaderFW.close();
+                LineFW.close();
+        }    
+            } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(frame,"The file you used is either invalid or missing" ,"Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+            
+        }    
+
+    private void NewLineMessageCancel() {
+       LineMessage.setVisible(false);
+       LineMessage.dispose();
+       LineMessage=null;
     }
 
-    private void NewInvoiceMessageCancel() {
-
+    private void NewLineMessageOK() {
+       LineMessage.setVisible(false);
+       
+       String name= LineMessage.getItemNameField().getText();
+       String CountText=LineMessage.getItemCountField().getText();
+       String PriceText=LineMessage.getItemPriceField().getText();
+       
+       int count=1;
+       double price=1;
+       try{
+            count=Integer.parseInt(CountText);
+          } catch(NumberFormatException ex){
+            JOptionPane.showMessageDialog(frame, "Inconvertible Number","Invalid number format",JOptionPane.ERROR_MESSAGE);
+          }
+       try{
+            price=Double.parseDouble(PriceText);
+          } catch(NumberFormatException ex){
+            JOptionPane.showMessageDialog(frame, "Inconvertible Price","Invalid price format",JOptionPane.ERROR_MESSAGE);
+          }
+       
+       if(price<0) price*=-1;
+       if(count<0) count*=-1;
+       int SelectedInvoiceHeader= frame.getHeaderTable().getSelectedRow();
+       if(SelectedInvoiceHeader!=-1){
+          InvoiceHeader InvHeader= frame.getInvoicesArray().get(SelectedInvoiceHeader);
+           InvoiceLine InvLine=new InvoiceLine(InvHeader,count,name,price);
+           //InvHeader.getLines().add(InvLine);           
+           frame.getLinesArray().add(InvLine); //this statement will also give the same result
+           InvoiceLineTableModel LineTableModel = (InvoiceLineTableModel) frame.getLineTable().getModel();
+           LineTableModel.fireTableDataChanged();
+           frame.getHeaderTableModel().fireTableDataChanged();
+           frame.getInvTotalLabel().setText(""+InvHeader.getInvoiceTotal());
+        }
+       frame.getHeaderTable().setRowSelectionInterval(SelectedInvoiceHeader,SelectedInvoiceHeader);    
+       LineMessage.dispose();
+       LineMessage=null;
     }
+    
 
-    private void NewInvoiceMessageOK() {
-
-    }
+    
     
 }
