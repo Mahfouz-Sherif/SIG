@@ -60,7 +60,7 @@ public class InvoiceLine {
 
     @Override
     public String toString() {
-        return "" + InvNum + "," + itemName + "," + itemPrice + "," + count + "";
+        return "" + InvNum + "," + itemName + "," + itemPrice + "," + count + ""; //adding a space after each comma will cause NumberFormatException
     }
 
     
