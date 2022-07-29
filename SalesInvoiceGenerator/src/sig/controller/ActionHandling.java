@@ -172,7 +172,8 @@ public class ActionHandling implements ActionListener {
        int Result = fc.showOpenDialog(frame);
        if(Result==JFileChooser.APPROVE_OPTION){
        File HeaderFile=fc.getSelectedFile();
-       Path HeaderPath= Paths.get(HeaderFile.getAbsolutePath());
+       Path HeaderPath= Paths.get(HeaderFile.getAbsolutePath())
+               ;
        List<String>HeaderLines=Files.readAllLines(HeaderPath);
        ArrayList<InvoiceHeader> InvoiceHeaders=new ArrayList<>();
        for(String HeaderLine: HeaderLines){
@@ -204,6 +205,7 @@ public class ActionHandling implements ActionListener {
        InvoiceHeader inv= frame.getInvoiceObject(InvoiceCode);
        InvoiceLine line=new InvoiceLine(inv,count,str2,price);
        inv.getLines().add(line);
+       //InvoiceLines.add(line);
        }
        }
        InvoiceHeaderTableModel HeaderTableModel = new InvoiceHeaderTableModel(InvoiceHeaders);
@@ -266,8 +268,9 @@ public class ActionHandling implements ActionListener {
        String CountText=LineMessage.getItemCountField().getText();
        String PriceText=LineMessage.getItemPriceField().getText();
        
-       int count=1;
+       int count=1;     //initializtion
        double price=1;
+       
        try{
             count=Integer.parseInt(CountText);
           } catch(NumberFormatException ex){
@@ -279,14 +282,16 @@ public class ActionHandling implements ActionListener {
             JOptionPane.showMessageDialog(frame, "Inconvertible Price","Invalid price format",JOptionPane.ERROR_MESSAGE);
           }
        
-       if(price<0) price*=-1;
+       if(price<0) price*=-1;   //negative number fix
        if(count<0) count*=-1;
+       
+       
        int SelectedInvoiceHeader= frame.getHeaderTable().getSelectedRow();
        if(SelectedInvoiceHeader!=-1){
           InvoiceHeader InvHeader= frame.getInvoicesArray().get(SelectedInvoiceHeader);
            InvoiceLine InvLine=new InvoiceLine(InvHeader,count,name,price);
-           //InvHeader.getLines().add(InvLine);           
-           frame.getLinesArray().add(InvLine); //this statement will also give the same result
+           //InvHeader.getLines().add(InvLine); this statement will also give the same result          
+           frame.getLinesArray().add(InvLine); 
            InvoiceLineTableModel LineTableModel = (InvoiceLineTableModel) frame.getLineTable().getModel();
            LineTableModel.fireTableDataChanged();
            frame.getHeaderTableModel().fireTableDataChanged();

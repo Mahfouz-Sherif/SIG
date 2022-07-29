@@ -4,7 +4,7 @@ package sig.model;
 
 public class InvoiceLine {
     private InvoiceHeader invoice;
-    private int count;
+    private int count, InvNum;
     private String itemName;
     private double itemPrice;
 
@@ -13,6 +13,7 @@ public class InvoiceLine {
         this.count = count;
         this.itemName = itemName;
         this.itemPrice = itemPrice;
+        this.InvNum = invoice.getInvoiceNum();
     }
 
     public double getItemPrice() {
@@ -51,9 +52,15 @@ public class InvoiceLine {
     return itemPrice * count;
     }
 
+    public int getInvNum() {
+        return InvNum;
+    }
+    
+    
+
     @Override
     public String toString() {
-        return "" + count + ", " + itemName + ", " + itemPrice + "";
+        return "" + InvNum + "," + itemName + "," + itemPrice + "," + count + "";
     }
 
     
